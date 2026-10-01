@@ -1,22 +1,22 @@
 import { useMemo } from 'react'
-import { ArrowLeftRight, BarChart3, ChartColumn, ChevronRight } from 'lucide-react'
+import { ArrowLeftRight, BarChart3, ChartArea, ChartColumn, ChevronRight } from 'lucide-react'
 import { VizCard, LegendKey, StatusBadge } from './VizParts'
 import BulletBars from './BulletBars'
-import { ColumnChart } from './XYCharts'
-import { roleValueTipRows } from './casOutputData'
+import { ColumnChart, AreaChart } from './XYCharts'
 import {
-  CHART, ROLE_BAND_MARGIN, ROLE_STATUS, STATUS_TONE, buildRoleRows, deltaPp, isNum, pp,
-  roleColor, statusTone, text,
+  AREA_CURRENT, CHART, ROLE_BAND_MARGIN, ROLE_STATUS, STATUS_TONE, buildRoleRows, deltaPp, isNum, pp,
+  roleColor, roleValueTipRows, statusTone, text,
 } from './casOutputData'
 
 /**
- * Three more ways to read the Role Diagnostic, beside the range view
+ * Four more ways to read the Role Diagnostic, beside the range view
  * (RoleDiagnosticChart.jsx). Same rows in the same order, a role is its
  * family's colour in every one, and every row opens the same holdings dialog:
  *
  *   RoleGapChart  only the gap — how much to add to or trim from each role
  *   RoleBars      a solid bar for today's mix, a dark tick for the target
  *   RoleColumns   a solid column for today's mix, a hollow one for the target
+ *   RoleArea      today's mix and the target as two filled curves
  */
 
 const NO_ROWS = <p className="py-8 text-center text-[13px] text-ink-mute">No role diagnostic in this output.</p>
@@ -229,6 +229,50 @@ export function RoleColumns({ diagnostic, schemes, onOpenRole, delay }) {
           <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2">
             <LegendKey color={CHART.inkSoft} label="Current" />
             {hasTarget && <LegendKey color={CHART.inkSoft} label="Target" shape="hollow" />}
+          </div>
+        </>
+      )}
+    </VizCard>
+  )
+}
+
+/* ── Area view ─────────────────────────────────────────────────────────── */
+
+export function RoleArea({ diagnostic, schemes, onOpenRole, delay }) {
+  const rows = useMemo(() => buildRoleRows(diagnostic, schemes), [diagnostic, schemes])
+  const hasTarget = rows.some(row => isNum(row.targetMix))
+
+  return (
+    <VizCard
+      title="Area view"
+      subtitle="Today's mix and the target as two filled curves — the space between the two shapes is the gap. Select a role to see its holdings."
+      icon={ChartArea}
+      delay={delay}
+    >
+      {!rows.length ? NO_ROWS : (
+        <>
+          <AreaChart
+            label="Role diagnostic area chart"
+            minBand={ROLE_BAND}
+            categories={rows.map(row => ({
+              key: row.role ?? row.order,
+              label: text(row.role),
+              note: <StatusBadge status={row.status} />,
+              onClick: () => onOpenRole(row),
+              extra: [
+                { label: 'gap (target − current)', value: deltaPp(row.gap) },
+                { label: row.schemes.length === 1 ? 'holding' : 'holdings', value: row.schemes.length },
+                ...roleValueTipRows(row),
+              ],
+            }))}
+            series={[
+              { name: 'Current mix', color: AREA_CURRENT, values: rows.map(row => row.currentMix) },
+              ...(hasTarget ? [{ name: 'Target', color: CHART.target, values: rows.map(row => row.targetMix), target: true }] : []),
+            ]}
+          />
+          <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2">
+            <LegendKey color={AREA_CURRENT} label="Current mix" shape="line" />
+            {hasTarget && <LegendKey color={CHART.target} label="Target — dashed, hollow points" shape="line" />}
           </div>
         </>
       )}

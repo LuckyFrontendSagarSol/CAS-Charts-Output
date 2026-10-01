@@ -1,14 +1,14 @@
 import { useState } from 'react'
-import { BarChart3, ChartColumn, PieChart } from 'lucide-react'
+import { BarChart3, ChartArea, ChartColumn, PieChart } from 'lucide-react'
 import { VizCard, LegendKey } from './VizParts'
 import BulletBars from './BulletBars'
-import { ColumnChart } from './XYCharts'
+import { ColumnChart, AreaChart } from './XYCharts'
 import {
-  CHART, REMAINDER_COLOR, REMAINDER_LABEL, buildAllocation, isNum, pct,
+  AREA_CURRENT, CHART, REMAINDER_COLOR, REMAINDER_LABEL, buildAllocation, deltaPp, isNum, pct,
 } from './casOutputData'
 
 /**
- * Three more ways to read the Portfolio Snapshot, beside the stacked view
+ * Four more ways to read the Portfolio Snapshot, beside the stacked view
  * (AllocationChart.jsx). Same data, and a group is its family's colour in
  * every one of them:
  *
@@ -17,6 +17,7 @@ import {
  *   AllocationDonuts   today and the recommended mix as two rings
  *   AllocationColumns  groups along the bottom — a solid column for today, a
  *                      hollow one for the recommended share
+ *   AllocationArea     today and the recommended mix as two filled curves
  */
 
 const NO_SNAPSHOT = <p className="py-8 text-center text-[13px] text-ink-mute">No portfolio snapshot in this output.</p>
@@ -207,6 +208,51 @@ export function AllocationColumns({ snapshot, delay }) {
           <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2">
             <LegendKey color={CHART.inkSoft} label="Current" />
             {hasTarget && <LegendKey color={CHART.inkSoft} label="Recommended" shape="hollow" />}
+          </div>
+        </>
+      )}
+    </VizCard>
+  )
+}
+
+/* ── Area view ─────────────────────────────────────────────────────────── */
+
+export function AllocationArea({ snapshot, delay }) {
+  const { groups, hasTarget, bars } = buildAllocation(snapshot)
+  const remainder = bars[0]?.segments.find(segment => segment.remainder)
+
+  const items = [
+    ...groups.map(group => ({ key: group.label, label: group.label, current: group.current, target: group.recommended })),
+    ...(remainder ? [{ key: REMAINDER_LABEL, label: REMAINDER_LABEL, current: remainder.value, target: null }] : []),
+  ]
+
+  return (
+    <VizCard
+      title="Area view"
+      subtitle="Today's mix and the recommended mix as two filled curves — the space between the two shapes is how far apart they are."
+      icon={ChartArea}
+      delay={delay}
+    >
+      {!groups.length ? NO_SNAPSHOT : (
+        <>
+          <AreaChart
+            label="Portfolio snapshot area chart"
+            minBand={120}
+            categories={items.map(item => ({
+              key: item.key,
+              label: item.label,
+              extra: isNum(item.current) && isNum(item.target)
+                ? [{ label: 'gap (recommended − current)', value: deltaPp(item.target - item.current) }]
+                : [],
+            }))}
+            series={[
+              { name: 'Current', color: AREA_CURRENT, values: items.map(item => item.current) },
+              ...(hasTarget ? [{ name: 'Recommended', color: CHART.target, values: items.map(item => item.target), target: true }] : []),
+            ]}
+          />
+          <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2">
+            <LegendKey color={AREA_CURRENT} label="Current" shape="line" />
+            {hasTarget && <LegendKey color={CHART.target} label="Recommended — dashed, hollow points" shape="line" />}
           </div>
         </>
       )}

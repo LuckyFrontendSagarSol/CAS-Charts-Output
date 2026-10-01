@@ -157,6 +157,9 @@ export const NEUTRAL_COLOR = '#9A9186'
 export const REMAINDER_COLOR = '#d6d1c4'
 /** The brand navy, for single-series marks outside the allocation charts. */
 export const MARK = '#202E86'
+/** Today's mix as a curve in the area views — the equity indigo. The target
+ *  curve is CHART.target, dashed. */
+export const AREA_CURRENT = FAMILY_COLORS.equity
 
 /** A role or group name → its family, by the prefix or the word in it. */
 export const familyOf = name => {

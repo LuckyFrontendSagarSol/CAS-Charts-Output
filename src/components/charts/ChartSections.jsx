@@ -1,10 +1,10 @@
 import { useCallback, useMemo, useState } from 'react'
 import { AnimatePresence } from 'framer-motion'
 import AllocationChart from './AllocationChart'
-import { AllocationBars, AllocationDonuts, AllocationColumns } from './AllocationViews'
+import { AllocationBars, AllocationDonuts, AllocationColumns, AllocationArea } from './AllocationViews'
 import RoleDiagnosticChart from './RoleDiagnosticChart'
 import RoleValueChart from './RoleValueChart'
-import { RoleGapChart, RoleBars, RoleColumns } from './RoleViews'
+import { RoleGapChart, RoleBars, RoleColumns, RoleArea } from './RoleViews'
 import CasDetailModal from './CasDetailModal'
 import { aggregate, isNum } from './casOutputData'
 
@@ -21,9 +21,9 @@ import { aggregate, isNum } from './casOutputData'
  * needs that width. Without it the three compact charts sit side by side
  * where there is room, as on the dashboard.
  *
- * There is no line, curve or area view: groups and roles are categories, not
- * points along an axis, so a line between two of them would show values that
- * do not exist.
+ * The area views draw groups and roles as smooth curves. They are categories,
+ * not points along an axis, so the curve between two points is only there to
+ * give each series one shape — the values are the points themselves.
  */
 
 const STACK = 'grid gap-5 sm:gap-6'
@@ -36,6 +36,7 @@ export function SnapshotCharts({ output, fullWidth = false }) {
       <AllocationBars snapshot={snapshot} delay={0.1} />
       <AllocationDonuts snapshot={snapshot} delay={0.15} />
       {fullWidth && <AllocationColumns snapshot={snapshot} delay={0.2} />}
+      {fullWidth && <AllocationArea snapshot={snapshot} delay={0.25} />}
     </div>
   )
 }
@@ -72,6 +73,7 @@ export function RoleCharts({ output, fullWidth = false }) {
             {gap}
             {bars}
             <RoleColumns diagnostic={roleDiagnostic} schemes={schemes} onOpenRole={openRole} delay={0.2} />
+            <RoleArea diagnostic={roleDiagnostic} schemes={schemes} onOpenRole={openRole} delay={0.25} />
           </>
         ) : (
           /* items-start: the bar view runs taller than the gap view, and
