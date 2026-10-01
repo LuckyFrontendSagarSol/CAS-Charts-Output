@@ -1,0 +1,253 @@
+@import "tailwindcss";
+
+/* ── InvestSmart design tokens ──────────────────────────────────────────────
+   Copied verbatim from the public site (Invest_smart_frontend/src/index.css)
+   so the admin panel and the site render the same brand. Change a colour there
+   and it must change here too. */
+:root {
+  --royal:      #202E86;
+  --royal-deep: #202E86;
+  --royal-soft: #202E86;
+  --royal-darker: oklch(16% 0.10 265);
+
+  --gold:       oklch(76% 0.115 82);
+  /* Non-text gold accent (borders/fills/icons · 3:1). */
+  --gold-deep:  #ab7224;
+  /* Gold that clears 4.5:1 as TEXT on every light surface. */
+  --gold-text:  #8f5b13;
+  /* The mirror of --gold-text for gold TEXT on the navy surfaces. */
+  --gold-on-dark: oklch(82% 0.115 82);
+
+  --beige:      oklch(94.5% 0.018 80);
+  --beige-warm: oklch(91% 0.024 78);
+  /* Decorative hairline only (1.3–1.5:1). Never a control boundary — use
+     --ui-border, the same hue at a compliant lightness. */
+  --beige-line: oklch(86% 0.020 78);
+  --paper:      #fefaf3;
+  --card-elevated: #ffffff;
+  --card-warm: #fffaf0;
+
+  /* WCAG 1.4.11 non-text contrast. The focus ring is two-tone — a light ring
+     inside and a dark ring outside the gold — so it keeps ≥3:1 on both the
+     cream surfaces and the navy sidebar. */
+  --ui-border:        oklch(60% 0.020 78);
+  --ui-border-strong: oklch(45% 0.020 78);
+  --focus-ring:       oklch(60% 0.115 70);
+  --focus-ring-inner: #ffffff;
+  --focus-ring-outer: oklch(20% 0.030 265);
+
+  --ink:        oklch(22% 0.020 265);
+  --ink-soft:   oklch(38% 0.020 265);
+  --ink-mute:   oklch(52% 0.018 265);
+  --ink-on-dark: oklch(85% 0.025 265);
+
+  --quote-up:   #2a7350;
+  --quote-down: #a8412f;
+
+  --status-approved-bg:      oklch(88% 0.12 145 / 0.18);
+  --status-approved-text:    oklch(42% 0.14 150);
+  --status-approved-border:  oklch(70% 0.12 145 / 0.35);
+  --status-cancelled-bg:     oklch(88% 0.12 25 / 0.18);
+  --status-cancelled-text:   oklch(50% 0.18 25);
+  --status-cancelled-border: oklch(70% 0.15 25 / 0.35);
+
+  --btn-gold-grad: linear-gradient(95deg, oklch(74% 0.175 56) 0%, oklch(79% 0.17 66) 55%, oklch(77.97% 0.16617 64.288) 100%);
+  --btn-gold-grad-hover: linear-gradient(95deg, oklch(76% 0.185 58) 0%, oklch(82% 0.178 68) 55%, oklch(77.304% 0.16053 73.955) 100%);
+
+  /* Admin-only surfaces, derived from the brand navy so the sidebar reads as
+     the same family as the site's footer. */
+  --sidebar-top:    #1b2a6b;
+  --sidebar-mid:    #0d1547;
+  --sidebar-bottom: #080f2e;
+}
+
+/* ── Tailwind theme ─────────────────────────────────────────────────────────
+   Tailwind v4 generates utilities straight from these. `--color-royal` gives
+   bg-royal / text-royal / border-royal, and so on for every token below. */
+@theme {
+  --font-display: "Plus Jakarta Sans", sans-serif;
+  --font-body: "DM Sans", sans-serif;
+
+  /* Brand tokens as utilities */
+  --color-royal:        #202E86;
+  --color-royal-deep:   #202E86;
+  --color-royal-darker: oklch(16% 0.10 265);
+  --color-gold:         oklch(76% 0.115 82);
+  --color-gold-deep:    #ab7224;
+  --color-gold-text:    #8f5b13;
+  --color-gold-on-dark: oklch(82% 0.115 82);
+  --color-beige:        oklch(94.5% 0.018 80);
+  --color-beige-warm:   oklch(91% 0.024 78);
+  --color-beige-line:   oklch(86% 0.020 78);
+  --color-paper:        #fefaf3;
+  --color-ink:          oklch(22% 0.020 265);
+  --color-ink-soft:     oklch(38% 0.020 265);
+  --color-ink-mute:     oklch(52% 0.018 265);
+  --color-ink-on-dark:  oklch(85% 0.025 265);
+  --color-ui-border:    oklch(60% 0.020 78);
+
+  /* Light palette */
+  --color-brand-950: #ffffff;
+  --color-brand-900: #f8fafc;
+  --color-brand-800: #f1f5f9;
+  --color-brand-700: #e2e8f0;
+  --color-brand-600: #94a3b8;
+
+  --color-electric-400: #818cf8;
+  --color-electric-500: #6366f1;
+  --color-electric-600: #4f46e5;
+  --color-electric-700: #4338ca;
+
+  --color-neon-400: #34d399;
+  --color-neon-500: #10b981;
+
+  --color-violet-400: #a78bfa;
+  --color-violet-500: #8b5cf6;
+  --color-violet-600: #7c3aed;
+
+  /* Gold palette */
+  --color-gold-300: #fcd34d;
+  --color-gold-400: #fbbf24;
+  --color-gold-500: #f59e0b;
+  --color-gold-600: #d97706;
+  --color-gold-700: #b45309;
+
+  /* Deep purple */
+  --color-dpurple-900: #0d0520;
+  --color-dpurple-800: #1e0a3c;
+  --color-dpurple-700: #2d1060;
+  --color-dpurple-600: #3b1578;
+
+  /* Beige / skin (cards) */
+  --color-beige-50:  #fdf8f0;
+  --color-beige-100: #f8ecda;
+  --color-beige-200: #edd9bb;
+  --color-beige-300: #dfc49a;
+
+  /* Motion */
+  --animate-aurora: aurora 18s ease-in-out infinite;
+  --animate-float: float 7s ease-in-out infinite;
+  --animate-float-slow: float 11s ease-in-out infinite;
+  --animate-shimmer: shimmer 2.4s linear infinite;
+  --animate-spin-slow: spin 22s linear infinite;
+  --animate-spin-slower: spin 34s linear infinite reverse;
+
+  @keyframes aurora {
+    0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+    33%      { transform: translate3d(4%, -6%, 0) scale(1.12); }
+    66%      { transform: translate3d(-5%, 4%, 0) scale(0.94); }
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-14px); }
+  }
+  @keyframes shimmer {
+    0%   { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+}
+
+/* ── Base ─────────────────────────────────────────────────────────────────── */
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  color: var(--ink);
+  background: var(--beige);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root { width: 100%; min-height: 100vh; }
+
+h1, h2, h3, h4, h5, h6 { font-family: var(--font-display); }
+
+/* ── Global keyboard-focus indicator ────────────────────────────────────────
+   Same two-tone ring as the site: gold outline flanked by a light ring inside
+   and a dark ring outside, so it stays visible on the cream content area and
+   on the navy sidebar alike. :focus-visible keeps it off mouse clicks. */
+:where(
+  a, button, [role="button"], summary, [tabindex],
+  input:is([type="checkbox"], [type="radio"], [type="file"], [type="range"], [type="color"])
+):focus-visible {
+  outline: 3px solid var(--focus-ring) !important;
+  outline-offset: 2px !important;
+  box-shadow:
+    0 0 0 2px var(--focus-ring-inner),
+    0 0 0 8px var(--focus-ring-outer) !important;
+}
+
+/* Masters fields (the list search box, the create/edit dialog inputs and the
+   multi-select control) already turn their border royal and lift a soft ring on
+   focus. Stacking the global two-tone ring on top of that doubles the treatment,
+   and its dark outer halo reads as a heavy black outline on the cream dialog.
+   Keep only the field's own soft ring — the royal border still carries the
+   focus state (WCAG 2.4.7). Mirrors the same rule on the public site. */
+.master-field:focus-visible {
+  outline: none !important;
+  box-shadow: 0 0 0 4px oklch(30% 0.10 265 / 0.12) !important;
+}
+
+/* Text fields are left out of the global ring above. A text input matches
+   :focus-visible on a mouse click too, so the ring drew a heavy dark-and-gold
+   box around every field as soon as it was clicked — and around the bare input
+   inside composite fields (the +91 mobile, the PAN with its icon) rather than
+   the field. Each field already shows focus itself: a royal border and a soft
+   ring, on the input or on its wrapper via focus-within. Only the browser's
+   own outline is removed here, so those rings (box-shadows) still show. */
+:where(input, select, textarea):focus-visible {
+  outline: none;
+}
+
+/* ── Utilities ──────────────────────────────────────────────────────────────
+   Small compositions that would otherwise be repeated verbatim across the
+   login screen and the shell. */
+@utility glass-card {
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(22px) saturate(140%);
+  -webkit-backdrop-filter: blur(22px) saturate(140%);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow:
+    0 24px 60px -22px rgba(8, 15, 46, 0.35),
+    0 2px 8px -2px rgba(8, 15, 46, 0.08);
+}
+
+@utility btn-gold {
+  background: var(--btn-gold-grad);
+  &:hover { background: var(--btn-gold-grad-hover); }
+}
+
+/* Sweeping highlight used on the login submit button and the sidebar logo. */
+@utility sheen {
+  background-image: linear-gradient(
+    100deg,
+    transparent 20%,
+    rgba(255, 255, 255, 0.45) 50%,
+    transparent 80%
+  );
+  background-size: 200% 100%;
+}
+
+/* Thin, unobtrusive scrollbar for the sidebar and content column. */
+@utility scroll-slim {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in oklab, var(--ink-mute) 40%, transparent) transparent;
+  &::-webkit-scrollbar { width: 8px; height: 8px; }
+  &::-webkit-scrollbar-thumb {
+    background: color-mix(in oklab, var(--ink-mute) 35%, transparent);
+    border-radius: 999px;
+  }
+  &::-webkit-scrollbar-track { background: transparent; }
+}
+
+/* Respect a reduced-motion preference: keep state changes, drop the movement. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
